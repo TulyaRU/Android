@@ -116,28 +116,37 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0) {  //
             if (requestCode == REQUEST_PERMISSION) {
-                boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                if (camera) {
-                    Log.d(TAG, "Разрешения к камере предоставлены");
-                } else {
-                    Log.d(TAG, "Разрешения к камере не предоставлены");
+                if (permissions[0].equals(Manifest.permission.CAMERA)) {
+                    boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (camera) {
+                        Log.d(TAG, "Разрешения к камере предоставлены");
+                    } else {
+                        Log.d(TAG, "Разрешения к камере не предоставлены");
+                    }
                 }
             } else if (requestCode == MULTI_REQUEST_PERMISSIONS) {
-                //  PackageManager.PERMISSION_GRANTED (Доступ разрешен) это константа со значением == 0
-                //  PackageManager.PERMISSION_DENIED (Доступ запрещен) == -1
-                /*
-                В grantResults приходят результаты, в том же порядки, в которых их поместили в массиве запроса
-                ActivityCompat.requestPermissions
-                   Manifest.permission.CAMERA,
-                   Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                   Manifest.permission.READ_EXTERNAL_STORAGE
-                 */
-                //  grantResults[0] -> Manifest.permission.CAMERA
-                //  grantResults[1] -> Manifest.permission.WRITE_EXTERNAL_STORAGE
-                //  grantResults[2] -> Manifest.permission.READ_EXTERNAL_STORAGE
-                boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean writeExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                boolean readExternalStorage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                boolean camera = false;
+                boolean writeExternalStorage = false;
+                boolean readExternalStorage = false;
+                int permissionCount = permissions.length; //  Получаем количество разрешений
+                for (int i = 0; i < permissionCount; i++) {
+                    int grantResult = grantResults[i];
+                    String permission = permissions[i];
+                    switch (permission) { //  Используем оператор switch
+                        case Manifest.permission.CAMERA:
+                            //  Используем оператор равенство и результат записываем в переменную camera
+                            camera = grantResult == PackageManager.PERMISSION_GRANTED;
+                            break;
+                        case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                            //  Используем оператор равенство и результат записываем в переменную writeExternalStorage
+                            writeExternalStorage = grantResult == PackageManager.PERMISSION_GRANTED;
+                            break;
+                        case Manifest.permission.READ_EXTERNAL_STORAGE:
+                            //  Используем оператор равенство и результат записываем в переменную readExternalStorage
+                            readExternalStorage = grantResult == PackageManager.PERMISSION_GRANTED;
+                            break;
+                    }
+                }
                 //  Все переменные должны быть true, чтобы соответствовать условию
                 if (camera && writeExternalStorage && readExternalStorage) {
                     Log.d(TAG, "Все разрешения предоставлены");
